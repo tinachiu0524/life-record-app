@@ -232,6 +232,12 @@ input:focus, select:focus, textarea:focus {
     border: 1px solid rgba(132, 112, 119, .16);
 }
 
+.shortcut-tip {
+    margin-bottom: 12px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
 .scheduled-input {
     display: grid;
     grid-template-columns: 1.3fr .8fr .7fr auto;
@@ -253,6 +259,14 @@ input:focus, select:focus, textarea:focus {
 .todo-row.done {
     background: #eef4ed;
     color: var(--muted);
+}
+
+.todo-row span {
+    flex: 1;
+}
+
+.todo-row .sync-shortcut {
+    flex: 0 0 auto;
 }
 
 .todo-row input[type="checkbox"] {

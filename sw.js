@@ -1,4 +1,4 @@
-const CACHE_NAME = 'life-record-webapp-v4-food-merged';
+const CACHE_NAME = 'life-record-webapp-v5-ios-shortcut-reminders';
 const ASSETS = [
     './',
     './index.html',

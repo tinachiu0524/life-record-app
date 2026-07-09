@@ -1,5 +1,6 @@
 const STORAGE_KEY = 'life-record-webapp-v1';
-const APP_VERSION = '2026-07-09-food-merged';
+const APP_VERSION = '2026-07-09-ios-shortcut-reminders';
+const SHORTCUT_NAME = '生活记录添加提醒';
 
 const fixedDailyTodos = [
     { time: '08:30', text: '上班打卡' },
@@ -180,9 +181,17 @@ function renderScheduledTodos() {
         <div class="todo-row ${todo.done ? 'done' : ''}" data-scheduled-id="${todo.id}">
             <input type="checkbox" ${todo.done ? 'checked' : ''} aria-label="完成提醒待办">
             <span>${todo.date} ${todo.time}｜${todo.text}</span>
+            <button class="secondary sync-shortcut" type="button">同步到 iPhone 提醒</button>
             <button class="secondary delete-scheduled" type="button">删除</button>
         </div>
     `).join('');
+}
+
+function openReminderShortcut(todo) {
+    const payload = `${todo.text}\n${todo.date}\n${todo.time}`;
+    const shortcutUrl = `shortcuts://run-shortcut?name=${encodeURIComponent(SHORTCUT_NAME)}&input=text&text=${encodeURIComponent(payload)}`;
+    showToast('正在打开快捷指令');
+    window.location.href = shortcutUrl;
 }
 
 function fixedKey(item, date = todayString()) {
@@ -327,6 +336,9 @@ function setupTodos() {
 
         if (event.target.matches('input[type="checkbox"]')) {
             todo.done = event.target.checked;
+        } else if (event.target.matches('.sync-shortcut')) {
+            openReminderShortcut(todo);
+            return;
         } else if (event.target.matches('.delete-scheduled')) {
             state.scheduledTodos = state.scheduledTodos.filter(item => item.id !== todo.id);
         }
