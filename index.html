@@ -19,10 +19,7 @@
                 <h1>生活记录系统</h1>
                 <p>记录三餐、出行、花费、运动和待办事项</p>
             </div>
-            <div class="hero-actions">
-                <div class="record-count" id="recordCount">0 条记录</div>
-                <button class="hero-test-button" id="testNotifyTop" type="button">测试通知</button>
-            </div>
+            <div class="record-count" id="recordCount">0 条记录</div>
         </header>
 
         <nav class="tab-bar" aria-label="功能导航">
@@ -104,17 +101,27 @@
                     <div class="section-title">
                         <div>
                             <h2>TodoList</h2>
-                            <p>支持点击勾选，每日固定待办会按时间提醒</p>
+                            <p>普通待办、每日固定待办和指定时间提醒待办</p>
                         </div>
                         <div class="notify-actions">
                             <button class="secondary" id="enableNotify">开启提醒</button>
-                            <button class="primary" id="testNotify" type="button">测试通知</button>
                         </div>
                     </div>
 
                     <div class="fixed-todos">
                         <h3>每日固定待办</h3>
                         <div id="fixedTodoList"></div>
+                    </div>
+
+                    <div class="scheduled-todos">
+                        <h3>指定时间提醒</h3>
+                        <form class="scheduled-input" id="scheduledTodoForm">
+                            <input type="text" id="scheduledTodoText" placeholder="例如：拿快递、喝水、开会" required>
+                            <input type="date" id="scheduledTodoDate" required>
+                            <input type="time" id="scheduledTodoTime" required>
+                            <button class="primary" type="submit">添加提醒</button>
+                        </form>
+                        <div id="scheduledTodoList"></div>
                     </div>
 
                     <form class="todo-input" id="todoForm">

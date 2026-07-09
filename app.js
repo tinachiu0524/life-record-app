@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'life-record-webapp-v1';
-const APP_VERSION = '2026-07-09-notify-top';
+const APP_VERSION = '2026-07-09-scheduled-todos';
 
 const fixedDailyTodos = [
     { time: '08:30', text: '上班打卡' },
@@ -20,6 +20,7 @@ function loadState() {
     const fallback = {
         records: [],
         todos: [],
+        scheduledTodos: [],
         fixedDone: {},
         notified: {}
     };
@@ -103,6 +104,7 @@ function renderAll() {
     renderRecords();
     renderSummary();
     renderTodos();
+    renderScheduledTodos();
     renderFixedTodos();
 }
 
@@ -158,6 +160,23 @@ function renderTodos() {
             <input type="checkbox" ${todo.done ? 'checked' : ''} aria-label="完成待办">
             <span>${todo.text}</span>
             <button class="secondary delete-todo" type="button">删除</button>
+        </div>
+    `).join('');
+}
+
+function renderScheduledTodos() {
+    const list = document.getElementById('scheduledTodoList');
+    if (!state.scheduledTodos.length) {
+        list.innerHTML = '<div class="record-item">暂无指定时间提醒</div>';
+        return;
+    }
+
+    const sorted = [...state.scheduledTodos].sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
+    list.innerHTML = sorted.map(todo => `
+        <div class="todo-row ${todo.done ? 'done' : ''}" data-scheduled-id="${todo.id}">
+            <input type="checkbox" ${todo.done ? 'checked' : ''} aria-label="完成提醒待办">
+            <span>${todo.date} ${todo.time}｜${todo.text}</span>
+            <button class="secondary delete-scheduled" type="button">删除</button>
         </div>
     `).join('');
 }
@@ -238,6 +257,8 @@ function setupForms() {
 }
 
 function setupTodos() {
+    document.getElementById('scheduledTodoDate').value = todayString();
+
     document.getElementById('todoForm').addEventListener('submit', event => {
         event.preventDefault();
         const input = document.getElementById('todoText');
@@ -247,6 +268,28 @@ function setupTodos() {
         input.value = '';
         saveState();
         renderTodos();
+    });
+
+    document.getElementById('scheduledTodoForm').addEventListener('submit', event => {
+        event.preventDefault();
+        const textInput = document.getElementById('scheduledTodoText');
+        const dateInput = document.getElementById('scheduledTodoDate');
+        const timeInput = document.getElementById('scheduledTodoTime');
+        const text = textInput.value.trim();
+        if (!text || !dateInput.value || !timeInput.value) return;
+
+        state.scheduledTodos.push({
+            id: makeId(),
+            text,
+            date: dateInput.value,
+            time: timeInput.value,
+            done: false,
+            notified: false
+        });
+        textInput.value = '';
+        saveState();
+        renderScheduledTodos();
+        showToast('提醒待办已添加');
     });
 
     document.getElementById('todoList').addEventListener('click', event => {
@@ -262,6 +305,21 @@ function setupTodos() {
         }
         saveState();
         renderTodos();
+    });
+
+    document.getElementById('scheduledTodoList').addEventListener('click', event => {
+        const row = event.target.closest('.todo-row');
+        if (!row) return;
+        const todo = state.scheduledTodos.find(item => item.id === row.dataset.scheduledId);
+        if (!todo) return;
+
+        if (event.target.matches('input[type="checkbox"]')) {
+            todo.done = event.target.checked;
+        } else if (event.target.matches('.delete-scheduled')) {
+            state.scheduledTodos = state.scheduledTodos.filter(item => item.id !== todo.id);
+        }
+        saveState();
+        renderScheduledTodos();
     });
 
     document.getElementById('clearDone').addEventListener('click', () => {
@@ -298,24 +356,6 @@ async function enableNotifications() {
     showToast(permission === 'granted' ? '提醒已开启' : '未开启提醒权限');
 }
 
-async function testNotification() {
-    if (!('Notification' in window)) {
-        alert('测试通知：该提醒会在支持通知的浏览器中弹出。');
-        return;
-    }
-
-    if (Notification.permission !== 'granted') {
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-            showToast('通知权限未开启，无法测试系统通知');
-            return;
-        }
-    }
-
-    notify('这是一条测试通知：生活记录提醒正常。');
-    showToast('测试通知已发送');
-}
-
 function notify(message) {
     if ('Notification' in window && Notification.permission === 'granted') {
         new Notification('每日固定待办', { body: message });
@@ -342,6 +382,31 @@ function checkFixedReminders() {
     });
 }
 
+function checkScheduledReminders() {
+    const now = new Date();
+    const date = todayString();
+    const current = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    let changed = false;
+
+    state.scheduledTodos.forEach(todo => {
+        if (todo.date === date && todo.time === current && !todo.done && !todo.notified) {
+            todo.notified = true;
+            changed = true;
+            notify(todo.text);
+        }
+    });
+
+    if (changed) {
+        saveState();
+        renderScheduledTodos();
+    }
+}
+
+function checkAllReminders() {
+    checkFixedReminders();
+    checkScheduledReminders();
+}
+
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js').catch(() => {});
@@ -355,11 +420,9 @@ function init() {
     setupTodos();
     setupRecords();
     document.getElementById('enableNotify').addEventListener('click', enableNotifications);
-    document.getElementById('testNotify').addEventListener('click', testNotification);
-    document.getElementById('testNotifyTop').addEventListener('click', testNotification);
     renderAll();
-    checkFixedReminders();
-    setInterval(checkFixedReminders, 60 * 1000);
+    checkAllReminders();
+    setInterval(checkAllReminders, 60 * 1000);
     registerServiceWorker();
 }
 
