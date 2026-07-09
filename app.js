@@ -297,6 +297,24 @@ async function enableNotifications() {
     showToast(permission === 'granted' ? '提醒已开启' : '未开启提醒权限');
 }
 
+async function testNotification() {
+    if (!('Notification' in window)) {
+        alert('测试通知：该提醒会在支持通知的浏览器中弹出。');
+        return;
+    }
+
+    if (Notification.permission !== 'granted') {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            showToast('通知权限未开启，无法测试系统通知');
+            return;
+        }
+    }
+
+    notify('这是一条测试通知：生活记录提醒正常。');
+    showToast('测试通知已发送');
+}
+
 function notify(message) {
     if ('Notification' in window && Notification.permission === 'granted') {
         new Notification('每日固定待办', { body: message });
@@ -336,6 +354,7 @@ function init() {
     setupTodos();
     setupRecords();
     document.getElementById('enableNotify').addEventListener('click', enableNotifications);
+    document.getElementById('testNotify').addEventListener('click', testNotification);
     renderAll();
     checkFixedReminders();
     setInterval(checkFixedReminders, 60 * 1000);
