@@ -17,16 +17,15 @@
             <div>
                 <p class="eyebrow">Life Journal</p>
                 <h1>生活记录系统</h1>
-                <p>记录三餐、出行、花费、运动和待办事项</p>
+                <p>记录饮食、出行、花费、运动和待办事项</p>
             </div>
             <div class="record-count" id="recordCount">0 条记录</div>
         </header>
 
         <nav class="tab-bar" aria-label="功能导航">
-            <button class="tab active" data-page="meal">三餐</button>
+            <button class="tab active" data-page="food">饮食</button>
             <button class="tab" data-page="transport">出行</button>
             <button class="tab" data-page="shopping">购物</button>
-            <button class="tab" data-page="food">饮食</button>
             <button class="tab" data-page="exercise">运动</button>
             <button class="tab" data-page="todo">Todo</button>
             <button class="tab" data-page="records">记录</button>
@@ -34,17 +33,6 @@
         </nav>
 
         <main>
-            <section class="page active" id="meal">
-                <form class="card form-card" data-form="meal">
-                    <h2>记录一日三餐</h2>
-                    <label>日期<input type="date" name="date" required></label>
-                    <label>餐别<select name="mealType"><option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐/夜宵</option></select></label>
-                    <label>吃了什么<input type="text" name="foods" placeholder="例如：牛奶、鸡蛋、沙拉" required></label>
-                    <label>备注<textarea name="note" rows="3" placeholder="可选"></textarea></label>
-                    <button class="primary" type="submit">保存三餐记录</button>
-                </form>
-            </section>
-
             <section class="page" id="transport">
                 <form class="card form-card" data-form="transport">
                     <h2>记录出行交通</h2>
@@ -71,16 +59,17 @@
                 </form>
             </section>
 
-            <section class="page" id="food">
+            <section class="page active" id="food">
                 <form class="card form-card" data-form="food">
-                    <h2>记录饮食花费</h2>
+                    <h2>记录饮食</h2>
                     <label>日期<input type="date" name="date" required></label>
-                    <label>饮食项目<select name="item"><option>早餐</option><option>午餐</option><option>晚餐</option><option>饮料</option><option>零食</option></select></label>
-                    <label>金额/元<input type="number" name="amount" min="0" step="0.01" required></label>
+                    <label>餐别<select name="mealType"><option>早餐</option><option>午餐</option><option>晚餐</option><option>饮料</option><option>零食</option><option>加餐/夜宵</option></select></label>
+                    <label>吃了什么<input type="text" name="item" placeholder="例如：牛奶、鸡蛋、沙拉" required></label>
+                    <label>花费/元（可选）<input type="number" name="amount" min="0" step="0.01" placeholder="没有花费可不填"></label>
                     <label>支付方式<select name="payment"><option>微信</option><option>支付宝</option><option>现金</option></select></label>
                     <label>图片（可选）<input type="file" name="image" accept="image/*"></label>
                     <label>备注<textarea name="note" rows="3" placeholder="可选"></textarea></label>
-                    <button class="primary" type="submit">保存饮食花费</button>
+                    <button class="primary" type="submit">保存饮食记录</button>
                 </form>
             </section>
 

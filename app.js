@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'life-record-webapp-v1';
-const APP_VERSION = '2026-07-09-scheduled-todos';
+const APP_VERSION = '2026-07-09-food-merged';
 
 const fixedDailyTodos = [
     { time: '08:30', text: '上班打卡' },
@@ -9,7 +9,7 @@ const fixedDailyTodos = [
 const state = loadState();
 
 const typeNameMap = {
-    meal: '三餐',
+    meal: '饮食',
     transport: '出行',
     shopping: '购物',
     food: '饮食',
@@ -90,8 +90,12 @@ function formatRecord(record) {
             return `${record.date}｜${record.tool}｜${record.minutes} 分钟${route}${record.note ? `｜备注：${record.note}` : ''}`;
         }
         case 'shopping':
-        case 'food':
             return `${record.date}｜${record.item}：${Number(record.amount).toFixed(2)} 元｜${record.payment}${record.note ? `｜备注：${record.note}` : ''}`;
+        case 'food': {
+            const amount = Number(record.amount || 0);
+            const expense = amount > 0 ? `｜花费：${amount.toFixed(2)} 元｜${record.payment || '未记录支付方式'}` : '';
+            return `${record.date}｜${record.mealType || '饮食'}：${record.item || record.foods || ''}${expense}${record.note ? `｜备注：${record.note}` : ''}`;
+        }
         case 'exercise':
             return `${record.date}｜${record.exerciseType}｜${record.minutes} 分钟｜强度：${record.intensity}${record.note ? `｜备注：${record.note}` : ''}`;
         default:
@@ -225,7 +229,7 @@ function setupForms() {
                     to: formData.get('to') || '',
                     minutes: Number(formData.get('minutes') || 0)
                 });
-            } else if (type === 'shopping' || type === 'food') {
+            } else if (type === 'shopping') {
                 Object.assign(record, {
                     item: formData.get('item'),
                     amount: Number(formData.get('amount') || 0),
@@ -236,6 +240,14 @@ function setupForms() {
                     showToast('金额需要大于 0');
                     return;
                 }
+            } else if (type === 'food') {
+                Object.assign(record, {
+                    mealType: formData.get('mealType'),
+                    item: formData.get('item'),
+                    amount: Number(formData.get('amount') || 0),
+                    payment: formData.get('payment'),
+                    image: await fileToDataUrl(formData.get('image'))
+                });
             } else if (type === 'exercise') {
                 Object.assign(record, {
                     exerciseType: formData.get('exerciseType'),
