@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'life-record-webapp-v1';
+const APP_VERSION = '2026-07-09-notify-top';
 
 const fixedDailyTodos = [
     { time: '08:30', text: '上班打卡' },
@@ -355,6 +356,7 @@ function init() {
     setupRecords();
     document.getElementById('enableNotify').addEventListener('click', enableNotifications);
     document.getElementById('testNotify').addEventListener('click', testNotification);
+    document.getElementById('testNotifyTop').addEventListener('click', testNotification);
     renderAll();
     checkFixedReminders();
     setInterval(checkFixedReminders, 60 * 1000);
