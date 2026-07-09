@@ -1,0 +1,10 @@
+{
+    "name": "生活记录系统",
+    "short_name": "生活记录",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#faf7f2",
+    "theme_color": "#d6849a",
+    "lang": "zh-CN",
+    "icons": []
+}

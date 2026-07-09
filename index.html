@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#d6849a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="生活记录">
+    <title>生活记录系统</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="hero-card">
+            <div>
+                <p class="eyebrow">Life Journal</p>
+                <h1>生活记录系统</h1>
+                <p>记录三餐、出行、花费、运动和待办事项</p>
+            </div>
+            <div class="record-count" id="recordCount">0 条记录</div>
+        </header>
+
+        <nav class="tab-bar" aria-label="功能导航">
+            <button class="tab active" data-page="meal">三餐</button>
+            <button class="tab" data-page="transport">出行</button>
+            <button class="tab" data-page="shopping">购物</button>
+            <button class="tab" data-page="food">饮食</button>
+            <button class="tab" data-page="exercise">运动</button>
+            <button class="tab" data-page="todo">Todo</button>
+            <button class="tab" data-page="records">记录</button>
+            <button class="tab" data-page="summary">汇总</button>
+        </nav>
+
+        <main>
+            <section class="page active" id="meal">
+                <form class="card form-card" data-form="meal">
+                    <h2>记录一日三餐</h2>
+                    <label>日期<input type="date" name="date" required></label>
+                    <label>餐别<select name="mealType"><option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐/夜宵</option></select></label>
+                    <label>吃了什么<input type="text" name="foods" placeholder="例如：牛奶、鸡蛋、沙拉" required></label>
+                    <label>备注<textarea name="note" rows="3" placeholder="可选"></textarea></label>
+                    <button class="primary" type="submit">保存三餐记录</button>
+                </form>
+            </section>
+
+            <section class="page" id="transport">
+                <form class="card form-card" data-form="transport">
+                    <h2>记录出行交通</h2>
+                    <label>日期<input type="date" name="date" required></label>
+                    <label>交通工具<select name="tool"><option>BRT</option><option>地铁</option><option>打车</option></select></label>
+                    <label>出发地<input type="text" name="from" placeholder="可选"></label>
+                    <label>目的地<input type="text" name="to" placeholder="可选"></label>
+                    <label>出行时长/分钟<input type="number" name="minutes" min="0" value="30"></label>
+                    <label>备注<textarea name="note" rows="3" placeholder="可选"></textarea></label>
+                    <button class="primary" type="submit">保存出行记录</button>
+                </form>
+            </section>
+
+            <section class="page" id="shopping">
+                <form class="card form-card" data-form="shopping">
+                    <h2>记录购物花费</h2>
+                    <label>日期<input type="date" name="date" required></label>
+                    <label>购买物品/服务<input type="text" name="item" placeholder="例如：衣服、日用品" required></label>
+                    <label>金额/元<input type="number" name="amount" min="0" step="0.01" required></label>
+                    <label>支付方式<select name="payment"><option>微信</option><option>支付宝</option><option>现金</option></select></label>
+                    <label>图片（可选）<input type="file" name="image" accept="image/*"></label>
+                    <label>备注<textarea name="note" rows="3" placeholder="可选"></textarea></label>
+                    <button class="primary" type="submit">保存购物花费</button>
+                </form>
+            </section>
+
+            <section class="page" id="food">
+                <form class="card form-card" data-form="food">
+                    <h2>记录饮食花费</h2>
+                    <label>日期<input type="date" name="date" required></label>
+                    <label>饮食项目<select name="item"><option>早餐</option><option>午餐</option><option>晚餐</option><option>饮料</option><option>零食</option></select></label>
+                    <label>金额/元<input type="number" name="amount" min="0" step="0.01" required></label>
+                    <label>支付方式<select name="payment"><option>微信</option><option>支付宝</option><option>现金</option></select></label>
+                    <label>图片（可选）<input type="file" name="image" accept="image/*"></label>
+                    <label>备注<textarea name="note" rows="3" placeholder="可选"></textarea></label>
+                    <button class="primary" type="submit">保存饮食花费</button>
+                </form>
+            </section>
+
+            <section class="page" id="exercise">
+                <form class="card form-card" data-form="exercise">
+                    <h2>记录运动</h2>
+                    <label>日期<input type="date" name="date" required></label>
+                    <label>运动类型<select name="exerciseType"><option>有氧</option><option>无氧</option></select></label>
+                    <label>运动时长/分钟<input type="number" name="minutes" min="0" value="30"></label>
+                    <label>运动强度<select name="intensity"><option>低</option><option>中</option><option>高</option></select></label>
+                    <label>备注<textarea name="note" rows="3" placeholder="可选"></textarea></label>
+                    <button class="primary" type="submit">保存运动记录</button>
+                </form>
+            </section>
+
+            <section class="page" id="todo">
+                <div class="card todo-card">
+                    <div class="section-title">
+                        <div>
+                            <h2>TodoList</h2>
+                            <p>支持点击勾选，每日固定待办会按时间提醒</p>
+                        </div>
+                        <button class="secondary" id="enableNotify">开启提醒</button>
+                    </div>
+
+                    <div class="fixed-todos">
+                        <h3>每日固定待办</h3>
+                        <div id="fixedTodoList"></div>
+                    </div>
+
+                    <form class="todo-input" id="todoForm">
+                        <input type="text" id="todoText" placeholder="输入新的待办事项" required>
+                        <button class="primary" type="submit">添加</button>
+                    </form>
+                    <div class="todo-actions">
+                        <span id="todoSummary">共 0 项，已完成 0 项</span>
+                        <button class="secondary" id="clearDone" type="button">删除已完成</button>
+                    </div>
+                    <div id="todoList"></div>
+                </div>
+            </section>
+
+            <section class="page" id="records">
+                <div class="card records-card">
+                    <div class="section-title">
+                        <div>
+                            <h2>全部记录</h2>
+                            <p>不同模块使用不同颜色分区</p>
+                        </div>
+                        <div class="filter-row">
+                            <input type="date" id="recordDateFilter">
+                            <button class="primary" id="filterRecords">筛选</button>
+                            <button class="secondary" id="showAllRecords">全部</button>
+                        </div>
+                    </div>
+                    <div id="recordList"></div>
+                </div>
+            </section>
+
+            <section class="page" id="summary">
+                <div class="card summary-card">
+                    <h2>消费汇总</h2>
+                    <div class="metric-grid">
+                        <div class="metric cream"><span>购物花费</span><strong id="shoppingTotal">0.00 元</strong></div>
+                        <div class="metric mint"><span>饮食花费</span><strong id="foodTotal">0.00 元</strong></div>
+                        <div class="metric lavender"><span>总消费</span><strong id="allTotal">0.00 元</strong></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="app.js"></script>
+</body>
+</html>
